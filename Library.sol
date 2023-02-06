@@ -3,16 +3,16 @@ pragma solidity 0.8.17;
 
 import "./Ownable.sol";
 
+error NotOwner();
+error InvalidBookData();
+error BookUnavailable();
+error AlreadyBorrowedBook();
+error BookAlreadyAdded();
+
 contract Library is Ownable {
     event AddBook(string indexed bookName, uint copies);
     event BorrowBook(address indexed borrower, string indexed bookName);
     event ReturnBook(address indexed borrower, string indexed bookName);
-
-    error NotOwner();
-    error InvalidBookData();
-    error BookUnavailable();
-    error AlreadyBorrowedBook();
-    error BookAlreadyAdded();
 
     struct Book {
         string name;
