@@ -1,77 +1,83 @@
-// SPDX-License-Identifier: UNLICENSED
-pragma solidity ^0.8.0;
+// SPDX-License-Identifier: MIT
+pragma solidity 0.8.17;
 
 import "./Ownable.sol";
 
 contract Library is Ownable {
-    event AddBook(string bookName, uint stock);
-    event BorrowBook(address indexed borrower, uint indexed bookId);
-    event ReturnBook(address indexed borrower, uint indexed bookId);
+    event AddBook(string indexed bookName, uint copies);
+    event BorrowBook(address indexed borrower, string indexed bookName);
+    event ReturnBook(address indexed borrower, string indexed bookName);
+
+    error NotOwner();
+    error InvalidBookData();
+    error BookUnavailable();
+    error AlreadyBorrowedBook();
+    error BookAlreadyAdded();
 
     struct Book {
-        uint id;
         string name;
-        uint stock;
+        uint copies;
+        address[] borrowers;
     }
 
-    Book[] public books;
+    bytes32[] public bookKeys;
 
-    mapping(address => mapping(uint => bool)) ownerBookPossession;
-    mapping(address => mapping(uint => bool)) ownerBookPossessionEver;
-    mapping(uint => address[]) bookBorrowers;
+    mapping(bytes32 => bool) private insertedBookKeys;
+    mapping(bytes32 => Book) public books;
+    mapping(address => mapping(bytes32 => bool)) public borrowedBooks;
 
-    modifier ownerOf(uint _bookId) {
-        require(ownerBookPossession[msg.sender][_bookId], "you must be the owner");
+    modifier validBookName(string calldata _bookName) {
+        if (!(bytes(_bookName).length > 0 && bytes(_bookName).length <= 32)) revert InvalidBookData();
         _;
     }
 
-    function addBook(string memory _bookName, uint _stock) external onlyOwner {
-        books.push(Book(books.length, _bookName, _stock));
-        emit AddBook(_bookName, _stock);
+    modifier ownerOf(string calldata _bookName) {
+        if (!borrowedBooks[msg.sender][bytes32(bytes(_bookName))]) revert NotOwner();
+        _;
     }
 
-    function returnBook(uint _bookId) external ownerOf(_bookId) {
-        ownerBookPossession[msg.sender][_bookId] = false;
-        books[_bookId].stock++;
-        emit ReturnBook(msg.sender, _bookId);
+    function addBook(string calldata _bookName, uint _copies) external validBookName(_bookName) onlyOwner {
+        if (_copies == 0) revert InvalidBookData();
+        bytes32 bookName = bytes32(bytes(_bookName));
+        if (insertedBookKeys[bookName]) revert BookAlreadyAdded();
+
+        insertedBookKeys[bookName] = true;
+        bookKeys.push(bookName);
+        books[bookName] = Book(_bookName, _copies, new address[](0));
+
+        emit AddBook(_bookName, _copies);
     }
 
-    function borrowBook(uint _bookId) external {
-        Book storage targetBook = books[_bookId];
-        require(targetBook.stock > 0, "not in stock");
-        require(!ownerBookPossession[msg.sender][_bookId], "you already have this book");
-        targetBook.stock--;
-        ownerBookPossession[msg.sender][_bookId] = true;
-        if (!ownerBookPossessionEver[msg.sender][_bookId]) {
-            ownerBookPossessionEver[msg.sender][_bookId] = true;
-            bookBorrowers[_bookId].push(msg.sender);
-        }
-        emit BorrowBook(msg.sender, _bookId);
+    function returnBook(string calldata _bookName) external validBookName(_bookName) ownerOf(_bookName) {
+        bytes32 bookName = bytes32(bytes(_bookName));
+        borrowedBooks[msg.sender][bookName] = false;
+        ++books[bookName].copies;
+        emit ReturnBook(msg.sender, _bookName);
     }
 
-    function getAllBorrowersOfBook(uint _bookId) external view returns (address[] memory) {
-        return bookBorrowers[_bookId];
+    function borrowBook(string calldata _bookName) external validBookName(_bookName) {
+        bytes32 bookName = bytes32(bytes(_bookName));
+        Book storage targetBook = books[bookName];
+        if (targetBook.copies == 0) revert BookUnavailable();
+        if (borrowedBooks[msg.sender][bookName]) revert AlreadyBorrowedBook();
+
+        --targetBook.copies;
+        borrowedBooks[msg.sender][bookName] = true;
+        targetBook.borrowers.push(msg.sender);
+
+        emit BorrowBook(msg.sender, _bookName);
     }
 
-    function getAllAvailableBooks() external view returns (Book[] memory) {
-        uint availableBooksCount = 0;
-        
-        for (uint i = 0; i < books.length; i++) {
-            if (books[i].stock > 0) {
-                availableBooksCount++;
-            }
-        }
+    function getNumberOfBooks() public view returns (uint) {
+        return bookKeys.length;
+    }
 
-        Book[] memory availableBooks = new Book[](availableBooksCount);
-        uint availableBooksIndex = 0;
+    function getBook(string calldata _bookName) external view validBookName(_bookName) returns (Book memory) {
+        return books[bytes32(bytes(_bookName))];
+    }
 
-        for (uint i = 0; i < books.length; i++) {
-            if (books[i].stock > 0) {
-                availableBooks[availableBooksIndex] = books[i];
-                availableBooksIndex++;
-            }
-        }
-
-        return availableBooks;
+    // Helper function for easy testing
+    function stringToByte32(string calldata _string) external pure returns (bytes32) {
+        return bytes32(bytes(_string));
     }
 }
