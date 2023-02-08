@@ -1,7 +1,6 @@
 // SPDX-License-Identifier: MIT
 pragma solidity 0.8.17;
-
-import "./Ownable.sol";
+import "@openzeppelin/contracts/access/Ownable.sol";
 
 error NotOwner();
 error InvalidBookData();
@@ -22,7 +21,7 @@ contract Library is Ownable {
 
     bytes32[] public bookKeys;
 
-    mapping(bytes32 => bool) private insertedBookKeys;
+    mapping(bytes32 => bool) public insertedBookKeys;
     mapping(bytes32 => Book) public books;
     mapping(address => mapping(bytes32 => bool)) public borrowedBooks;
 
