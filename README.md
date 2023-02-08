@@ -1,13 +1,9 @@
-# Sample Hardhat Project
+# Hardhat Library Project
 
-This project demonstrates a basic Hardhat use case. It comes with a sample contract, a test for that contract, and a script that deploys that contract.
+Goerli Library contract:
+ - address: 0x60C66327508FdFE2eDBA3DbF5fc6491D0A611578
+ - verify link: https://goerli.etherscan.io/address/0x60C66327508FdFE2eDBA3DbF5fc6491D0A611578#code
 
-Try running some of the following tasks:
-
-```shell
-npx hardhat help
-npx hardhat test
-REPORT_GAS=true npx hardhat test
-npx hardhat node
-npx hardhat run scripts/deploy.ts
-```
+Sepolia Library contract:
+ - address: 0x0f00416F6E1756B439E8D6AD00561f935EbbbAf0
+ - verify link: https://sepolia.etherscan.io/address/0x0f00416F6E1756B439E8D6AD00561f935EbbbAf0#code
