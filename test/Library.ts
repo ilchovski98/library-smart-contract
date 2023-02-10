@@ -1,7 +1,7 @@
-import { Library, Library__factory } from "./../typechain-types";
 import { expect, assert } from "chai";
 import { ethers } from "hardhat";
 import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
+import { Library, Library__factory } from "./../typechain-types";
 
 describe("Library", function() {
   let libraryFactory: Library__factory;

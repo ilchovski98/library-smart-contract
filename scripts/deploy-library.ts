@@ -10,9 +10,13 @@ export async function main() {
     console.log('waiting for 5 confirmation blocks...');
     await transaction.deployTransaction.wait(5);
     console.log('5 confirmation blocks passed');
-    await hre.run("verify:verify", {
-      address: library.address,
-    });
+    try {
+      await hre.run("verify:verify", {
+        address: library.address,
+      });
+    } catch (error) {
+      console.error(error.reason);
+    }
   }
 
   return { library }
