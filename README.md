@@ -1,9 +1,9 @@
 # Hardhat Library Project
 
 Goerli Library contract:
- - address: 0x60C66327508FdFE2eDBA3DbF5fc6491D0A611578
- - verify link: https://goerli.etherscan.io/address/0x60C66327508FdFE2eDBA3DbF5fc6491D0A611578#code
+ - address: 0x210C8DEc984331de86F35Ec719F2858CC491CA45
+ - verify link: https://goerli.etherscan.io/address/0x210C8DEc984331de86F35Ec719F2858CC491CA45#code
 
 Sepolia Library contract:
- - address: 0x0f00416F6E1756B439E8D6AD00561f935EbbbAf0
- - verify link: https://sepolia.etherscan.io/address/0x0f00416F6E1756B439E8D6AD00561f935EbbbAf0#code
+ - address: 0xe7cDb89b500B953348C1172C3828E611665263e9
+ - verify link: https://sepolia.etherscan.io/address/0xe7cDb89b500B953348C1172C3828E611665263e9#code
