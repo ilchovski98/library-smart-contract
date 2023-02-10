@@ -1,7 +1,9 @@
 import { ethers } from "hardhat";
+import { SignerWithAddress } from "@nomiclabs/hardhat-ethers/signers";
+import { Library } from "./../typechain-types";
 import LibraryData from "./../artifacts/contracts/Library.sol/Library.json";
 
-let deployer, libraryContract;
+let deployer: SignerWithAddress, libraryContract: Library;
 
 async function addBook(bookName, bookCopies) {
   const addBookTransaction = await libraryContract.addBook(bookName, bookCopies);
@@ -11,12 +13,12 @@ async function addBook(bookName, bookCopies) {
 
 async function getAllAvailableBooks() {
   const numberOfBooks = (await libraryContract.getNumberOfBooks()).toNumber();
-  let books = [];
+  let books: Library.BookStructOutput[] = [];
 
   for (let index = 0; index <= numberOfBooks - 1; index++) {
     const currentBookKey = await libraryContract.bookKeys(index);
     // using getBook instead of mapping in order to get the borrowers array inside the book struct
-    const currentBook = await libraryContract.getBook(ethers.utils.parseBytes32String(currentBookKey));
+    const currentBook: Library.BookStructOutput = await libraryContract.getBook(ethers.utils.parseBytes32String(currentBookKey));
     books.push(currentBook);
   }
 
@@ -46,7 +48,6 @@ async function isBookAvailable(bookName) {
   const isBookAvailable = availableCopies > 0;
   console.log(`6. The ${bookName} book is ${isBookAvailable ? "" : "not "}available.${isBookAvailable ? ` The library has ${availableCopies} unit${availableCopies > 1 ? "s" : ""} in stock.` : "" }`);
 }
-
 
 export async function runAllBookInteractions(bookName: string, bookCopies: number, deployedContractAddress: string) {
   try {
