@@ -3,7 +3,8 @@ pragma solidity 0.8.17;
 import "@openzeppelin/contracts/access/Ownable.sol";
 
 error NotOwner();
-error InvalidBookData();
+error InvalidBookName();
+error InvalidBookCopies();
 error BookUnavailable();
 error AlreadyBorrowedBook();
 error BookAlreadyAdded();
@@ -26,7 +27,7 @@ contract Library is Ownable {
     mapping(address => mapping(bytes32 => bool)) public borrowedBooks;
 
     modifier validBookName(string calldata _bookName) {
-        if (!(bytes(_bookName).length > 0 && bytes(_bookName).length <= 32)) revert InvalidBookData();
+        if (!(bytes(_bookName).length > 0 && bytes(_bookName).length <= 32)) revert InvalidBookName();
         _;
     }
 
@@ -36,7 +37,7 @@ contract Library is Ownable {
     }
 
     function addBook(string calldata _bookName, uint _copies) external validBookName(_bookName) onlyOwner {
-        if (_copies == 0) revert InvalidBookData();
+        if (_copies == 0) revert InvalidBookCopies();
         bytes32 bookName = bytes32(bytes(_bookName));
         if (insertedBookKeys[bookName]) revert BookAlreadyAdded();
 

@@ -20,17 +20,17 @@ describe("Library", function() {
   describe("addBook", function() {
     it("Reverts when trying to add a book with an empty name", async function() {
       await expect(library.addBook("", 2))
-        .to.be.revertedWithCustomError(library, "InvalidBookData");
+        .to.be.revertedWithCustomError(library, "InvalidBookName");
     });
 
     it("Reverts when trying to add a book with more than 32 characters", async function() {
       await expect(library.addBook("Our Last Invention Our Last Invention", 2))
-        .to.be.revertedWithCustomError(library, "InvalidBookData");
+        .to.be.revertedWithCustomError(library, "InvalidBookName");
     });
 
     it("Reverts when trying to add a book with 0 copies", async function() {
       await expect(library.addBook("Mastering Ethereum", 0))
-        .to.be.revertedWithCustomError(library, "InvalidBookData");
+        .to.be.revertedWithCustomError(library, "InvalidBookCopies");
     });
 
     it("Reverts when trying to add a book while not being the owner", async function() {
@@ -124,12 +124,12 @@ describe("Library", function() {
 
     it("Reverts when trying to borrow a book with an empty name", async function() {
       await expect(library.borrowBook(""))
-        .to.be.revertedWithCustomError(library, "InvalidBookData");
+        .to.be.revertedWithCustomError(library, "InvalidBookName");
     });
 
     it("Reverts when trying to add a book with more than 32 characters", async function() {
       await expect(library.borrowBook("Our Last Invention Our Last Invention"))
-        .to.be.revertedWithCustomError(library, "InvalidBookData");
+        .to.be.revertedWithCustomError(library, "InvalidBookName");
     });
   });
 
@@ -166,12 +166,12 @@ describe("Library", function() {
 
     it("Reverts when trying to return a book with an empty name", async function() {
       await expect(library.returnBook(""))
-        .to.be.revertedWithCustomError(library, "InvalidBookData");
+        .to.be.revertedWithCustomError(library, "InvalidBookName");
     });
 
     it("Reverts when trying to return a book with more than 32 characters", async function() {
       await expect(library.returnBook("Our Last Invention Our Last Invention"))
-        .to.be.revertedWithCustomError(library, "InvalidBookData");
+        .to.be.revertedWithCustomError(library, "InvalidBookName");
     });
 
     it("Emits event after return", async function() {
@@ -184,12 +184,12 @@ describe("Library", function() {
   describe("getBook", function() {
     it("Reverts when trying to borrow a book with an empty name", async function() {
       await expect(library.getBook(""))
-        .to.be.revertedWithCustomError(library, "InvalidBookData");
+        .to.be.revertedWithCustomError(library, "InvalidBookName");
     });
 
     it("Reverts when trying to add a book with more than 32 characters", async function() {
       await expect(library.getBook("Our Last Invention Our Last Invention"))
-        .to.be.revertedWithCustomError(library, "InvalidBookData");
+        .to.be.revertedWithCustomError(library, "InvalidBookName");
     });
   });
 
