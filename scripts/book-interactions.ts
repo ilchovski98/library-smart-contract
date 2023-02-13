@@ -5,7 +5,7 @@ import LibraryData from "./../artifacts/contracts/Library.sol/Library.json";
 
 let deployer: SignerWithAddress, libraryContract: Library;
 
-async function addBook(bookName, bookCopies) {
+async function addBook(bookName: string, bookCopies: number) {
   const addBookTransaction = await libraryContract.addBook(bookName, bookCopies);
   await addBookTransaction.wait();
   console.log(`1. Added ${bookCopies} unit${bookCopies > 1 ? "s" : ""} of the ${bookName} book to the library.`);
@@ -26,24 +26,24 @@ async function getAllAvailableBooks() {
   console.log('2. List of the available books in the library: ', availableBooks);
 }
 
-async function borrowBook(bookName) {
+async function borrowBook(bookName: string) {
   const borrowTransaction = await libraryContract.borrowBook(bookName);
   await borrowTransaction.wait();
   console.log(`3. Borrowed the ${bookName} book.`);
 }
 
-async function isBookBorrowedByAddress(bookName) {
+async function isBookBorrowedByAddress(bookName: string) {
   const isBookBorrowed = await libraryContract.borrowedBooks(deployer.address, ethers.utils.formatBytes32String(bookName));
   console.log(`4. Is the ${bookName} borrowed: `, isBookBorrowed);
 }
 
-async function returnBook(bookName) {
+async function returnBook(bookName: string) {
   const returnBookTransaction = await libraryContract.returnBook(bookName);
   await returnBookTransaction.wait();
   console.log(`5. The borrowed ${bookName} book is now returned.`);
 }
 
-async function isBookAvailable(bookName) {
+async function isBookAvailable(bookName: string) {
   const availableCopies = (await libraryContract.getBook(bookName)).copies.toNumber();
   const isBookAvailable = availableCopies > 0;
   console.log(`6. The ${bookName} book is ${isBookAvailable ? "" : "not "}available.${isBookAvailable ? ` The library has ${availableCopies} unit${availableCopies > 1 ? "s" : ""} in stock.` : "" }`);
